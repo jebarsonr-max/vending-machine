@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Smart Vending Kiosk // Customer View</title>
+
+  <!-- Google Fonts: Inter & JetBrains Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <!-- Stylesheets -->
+  <link rel="stylesheet" href="styles/main.css">
+  <link rel="stylesheet" href="styles/components.css">
+
+  <style>
+    /* Customer Kiosk Specific Layout */
+    .kiosk-body {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .kiosk-header {
+      background: var(--bg-glass);
+      backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--border-color);
+      padding: 14px 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .kiosk-main-wrapper {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 40px 16px;
+    }
+
+    .kiosk-machine-container {
+      max-width: 520px;
+      width: 100%;
+    }
+
+    .kiosk-steps-bar {
+      margin-top: 32px;
+      display: flex;
+      gap: 20px;
+      justify-content: center;
+      flex-wrap: wrap;
+      max-width: 700px;
+    }
+
+    .kiosk-step-pill {
+      background: rgba(16, 25, 52, 0.75);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      padding: 10px 18px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+    }
+
+    .kiosk-step-pill .num {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      background: var(--cyan-neon);
+      color: #0a0f1f;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.78rem;
+    }
+
+    .role-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 12px;
+      background: rgba(0, 255, 136, 0.12);
+      border: 1px solid var(--emerald-neon);
+      color: var(--emerald-neon);
+      border-radius: 20px;
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      font-weight: 600;
+    }
+  </style>
+</head>
+<body class="kiosk-body">
+
+  <!-- Background Canvas -->
+  <canvas id="pcbCanvas" class="pcb-background-canvas"></canvas>
+
+  <!-- Kiosk Header -->
+  <header class="kiosk-header">
+    <div style="display:flex; align-items:center; gap:16px;">
+      <a href="customer.html" class="brand">
+        <div class="brand-icon">
+          <svg viewBox="0 0 24 24">
+            <rect x="2" y="2" width="20" height="20" rx="4" stroke="currentColor" stroke-width="2"/>
+            <path d="M7 7h10M7 12h5M7 17h8" stroke="currentColor" stroke-width="2"/>
+            <circle cx="16" cy="12" r="1.5" fill="currentColor"/>
+          </svg>
+        </div>
+        <div class="brand-text">SMART <span>VENDING KIOSK</span></div>
+      </a>
+      <span class="role-badge">● Customer Mode</span>
+    </div>
+
+    <div style="display:flex; align-items:center; gap:12px;">
+      <button class="btn-secondary" id="btnAudioToggle" style="padding:6px 14px; font-size:0.8rem;">
+        🔊 Sound: ON
+      </button>
+      <a href="admin.html" class="btn-amber" style="padding:8px 18px; font-size:0.82rem; border-radius:var(--radius-md); text-decoration:none; display:inline-flex; align-items:center; gap:8px;">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+        Switch to Admin / Engineering View
+      </a>
+      <button class="theme-toggle-btn" id="themeToggleBtn" aria-label="Toggle Theme">
+        <span id="themeIcon"></span>
+      </button>
+    </div>
+  </header>
+
+  <!-- Main Customer Experience -->
+  <main class="kiosk-main-wrapper">
+    <div style="text-align:center; margin-bottom:24px;">
+      <h1 style="font-size:2rem; font-weight:800; margin-bottom:6px;">Select & Dispense Your Refreshment</h1>
+      <p style="color:var(--text-secondary); font-size:0.95rem;">
+        Insert coins into the slot, choose your item, and collect your drink and change below.
+      </p>
+    </div>
+
+    <!-- The Vending Machine (Customer Facing Only) -->
+    <div class="kiosk-machine-container">
+      <div class="machine-console" style="box-shadow: 0 25px 60px rgba(0,0,0,0.8), 0 0 35px rgba(0, 240, 255, 0.2);">
+
+        <!-- 7-Segment LED Dashboard -->
+        <div class="seven-seg-cluster">
+          <div class="seg-display-group">
+            <span class="seg-display-label">Inserted Balance</span>
+            <div class="seg-digits-row">
+              <svg id="balanceSegTens" class="seven-seg-svg" viewBox="0 0 60 100">
+                <polygon class="seg-a" points="12,8 48,8 42,16 18,16"/>
+                <polygon class="seg-b" points="49,9 57,17 51,48 43,42"/>
+                <polygon class="seg-c" points="51,52 57,58 49,91 43,84"/>
+                <polygon class="seg-d" points="18,84 42,84 48,92 12,92"/>
+                <polygon class="seg-e" points="9,58 17,52 17,84 9,91"/>
+                <polygon class="seg-f" points="9,17 17,9 17,42 9,48"/>
+                <polygon class="seg-g" points="18,46 42,46 46,50 42,54 18,54 14,50"/>
+              </svg>
+              <svg id="balanceSegOnes" class="seven-seg-svg" viewBox="0 0 60 100">
+                <polygon class="seg-a" points="12,8 48,8 42,16 18,16"/>
+                <polygon class="seg-b" points="49,9 57,17 51,48 43,42"/>
+                <polygon class="seg-c" points="51,52 57,58 49,91 43,84"/>
+                <polygon class="seg-d" points="18,84 42,84 48,92 12,92"/>
+                <polygon class="seg-e" points="9,58 17,52 17,84 9,91"/>
+                <polygon class="seg-f" points="9,17 17,9 17,42 9,48"/>
+                <polygon class="seg-g" points="18,46 42,46 46,50 42,54 18,54 14,50"/>
+              </svg>
+            </div>
+          </div>
+
+          <div class="seg-display-group" style="text-align:right;">
+            <span class="seg-display-label">Item Price</span>
+            <div class="seg-digits-row">
+              <svg id="priceSegTens" class="seven-seg-svg amber" viewBox="0 0 60 100">
+                <polygon class="seg-a" points="12,8 48,8 42,16 18,16"/>
+                <polygon class="seg-b" points="49,9 57,17 51,48 43,42"/>
+                <polygon class="seg-c" points="51,52 57,58 49,91 43,84"/>
+                <polygon class="seg-d" points="18,84 42,84 48,92 12,92"/>
+                <polygon class="seg-e" points="9,58 17,52 17,84 9,91"/>
+                <polygon class="seg-f" points="9,17 17,9 17,42 9,48"/>
+                <polygon class="seg-g" points="18,46 42,46 46,50 42,54 18,54 14,50"/>
+              </svg>
+              <svg id="priceSegOnes" class="seven-seg-svg amber" viewBox="0 0 60 100">
+                <polygon class="seg-a" points="12,8 48,8 42,16 18,16"/>
+                <polygon class="seg-b" points="49,9 57,17 51,48 43,42"/>
+                <polygon class="seg-c" points="51,52 57,58 49,91 43,84"/>
+                <polygon class="seg-d" points="18,84 42,84 48,92 12,92"/>
+                <polygon class="seg-e" points="9,58 17,52 17,84 9,91"/>
+                <polygon class="seg-f" points="9,17 17,9 17,42 9,48"/>
+                <polygon class="seg-g" points="18,46 42,46 46,50 42,54 18,54 14,50"/>
+              </svg>
+            </div>
+          </div>
+        </div>
+
+        <!-- Product Selection Slots -->
+        <div class="items-rack">
+          <button class="item-slot-btn" data-item-id="itemA">
+            <span class="item-icon">🥤</span>
+            <span class="item-name">A: Cold Soda</span>
+            <span class="item-price-tag">₹15</span>
+          </button>
+          <button class="item-slot-btn" data-item-id="itemB">
+            <span class="item-icon">☕</span>
+            <span class="item-name">B: Nitro Coffee</span>
+            <span class="item-price-tag">₹20</span>
+          </button>
+          <button class="item-slot-btn" data-item-id="itemC">
+            <span class="item-icon">🍫</span>
+            <span class="item-name">C: Energy Bar</span>
+            <span class="item-price-tag">₹10</span>
+          </button>
+          <button class="item-slot-btn" data-item-id="itemD">
+            <span class="item-icon">💧</span>
+            <span class="item-name">D: Spring Water</span>
+            <span class="item-price-tag">₹5</span>
+          </button>
+        </div>
+
+        <!-- Coin Insertion Panel -->
+        <div class="coin-panel">
+          <div class="coin-panel-title">
+            <span>Insert Coin (Click to Insert)</span>
+            <button class="btn-secondary" id="btnCancelRefund" style="padding:4px 10px; font-size:0.75rem; border-color:var(--crimson-neon); color:var(--crimson-neon);">
+              Refund / Cancel
+            </button>
+          </div>
+          <div class="coins-grid">
+            <button class="coin-btn" data-coin-val="1">₹1</button>
+            <button class="coin-btn" data-coin-val="2">₹2</button>
+            <button class="coin-btn" data-coin-val="5">₹5</button>
+            <button class="coin-btn coin-10" data-coin-val="10">₹10</button>
+          </div>
+        </div>
+
+        <!-- Physical Drop Chutes -->
+        <div class="chute-slots-row">
+          <div class="dispense-bay">
+            <div class="dispense-bay-label">Dispenser Bay (Click item to take)</div>
+            <div class="dispensed-item-tray" id="dispensedTray">
+              <span style="color:#536b8e; font-size:0.8rem;">Chute empty. Ready.</span>
+            </div>
+          </div>
+
+          <div class="change-return-bay">
+            <div class="dispense-bay-label">Change Tray (Click coins to take)</div>
+            <div class="change-coins-tray" id="changeCoinsTray">
+              <span style="color:#536b8e; font-size:0.8rem;">Empty</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Real-time Status Banner & Bill Button -->
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-top:16px; flex-wrap:wrap; gap:8px;">
+          <div id="kioskStatusBanner" style="font-family:var(--font-mono); font-size:0.82rem; color:var(--cyan-neon); min-height:22px; font-weight:600; flex:1;">
+            Welcome! Insert coins or select your refreshment.
+          </div>
+          <button id="btnViewBill" class="btn-secondary" style="padding:4px 10px; font-size:0.75rem; display:none;">
+            🧾 View Bill
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Easy 3-Step Customer Guide -->
+    <div class="kiosk-steps-bar">
+      <div class="kiosk-step-pill">
+        <span class="num">1</span>
+        <span>Insert Coins (₹1, ₹2, ₹5, ₹10)</span>
+      </div>
+      <div class="kiosk-step-pill">
+        <span class="num">2</span>
+        <span>Select Your Desired Item</span>
+      </div>
+      <div class="kiosk-step-pill">
+        <span class="num">3</span>
+        <span>Collect Item & Change Below</span>
+      </div>
+    </div>
+  </main>
+
+  <footer style="text-align:center; padding:18px; border-top:1px solid var(--border-subtle); font-size:0.75rem; color:var(--text-muted); font-family:var(--font-mono);">
+    Smart Vending Machine Controller // Customer Kiosk Interface // Powered by FPGA FSM RTL.
+  </footer>
+
+  <!-- Scripts -->
+  <script src="js/fsm-engine.js"></script>
+  <script src="js/customer-ui.js"></script>
+  <script>
+    // Theme toggle initialization
+    const toggleBtn = document.getElementById('themeToggleBtn');
+    const currentTheme = localStorage.getItem('dsd_theme') || 'dark';
+    document.documentElement.setAttribute('data-theme', currentTheme);
+    const updateIcon = (theme) => {
+      const icon = document.getElementById('themeIcon');
+      if (icon) {
+        icon.innerHTML = theme === 'dark'
+          ? '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>'
+          : '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>';
+      }
+    };
+    updateIcon(currentTheme);
+    if (toggleBtn) {
+      toggleBtn.addEventListener('click', () => {
+        const active = document.documentElement.getAttribute('data-theme');
+        const nextTheme = active === 'dark' ? 'light' : 'dark';
+        document.documentElement.setAttribute('data-theme', nextTheme);
+        localStorage.setItem('dsd_theme', nextTheme);
+        updateIcon(nextTheme);
+      });
+    }
+  </script>
+</body>
+</html>
+
